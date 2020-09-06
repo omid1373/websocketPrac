@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title> Test Websocket</title>
+    </head>
+    <body>
+        <center>
+        <h1>Socket Checking</h1>
+        <textarea id="text" rows="10" cols="50" readonly></textarea><br><br><br>
+        <input id="input"/><br><br>
+        <button name="subject" value="send" onclick="btnClick()">Send</button>
+        </center>
+    </body>
+</html>
+<script>
+let text = document.getElementById("text");
+let input = document.getElementById("input");
+let button = document.getElementById("button");
+
+var conn = new WebSocket('ws://localhost:8080');
+conn.onopen = function(e) {
+    console.log("Connection established!");
+    alert("Connection established!");
+};
+
+conn.close = function(e) {
+    console.log("Connection closed!");
+    alert("Connection closed!");
+};
+
+conn.onmessage= function(e) {
+    // console.log(e.data);
+    text.value += "Server->" + e.data + "\n";
+};
+
+conn.onerror = function(e){
+    // console.log("Error...." , e.data);
+    alert("Error...." + e.data);
+}
+
+let btnClick = () => {
+    let temp = input.value;
+    input.value = "";
+    text.value += "Self :: "+temp + "\n";
+    conn.send(temp);
+}
+
+document.getElementById("input")
+    .addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.key === 'Enter') {
+            btnClick();
+        }
+    });
+</script>
